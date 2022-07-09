@@ -72,7 +72,7 @@ procedure create_novel_file(var new_file: novels_file; dir: String);
         rewrite(new_file);
         header.code := 0;
         write(new_file,header);
-        // Debería aá cargar unno por uno por teclado, cosa que no voy a hacer
+        // Debería acá cargar uno por uno por teclado, cosa que no voy a hacer
         close(new_file);
     end;
 //-----------------------------------------------------
@@ -104,9 +104,9 @@ procedure add_novel(var a: novels_file; new_novel: novel);
             seek(a,cabecera.code * -1);
             read(a,aux_n);
             seek(a,filepos(a)-1);
-            write(new_novel);
+            write(a,new_novel);
             seek(a,0);
-            write(aux_n);
+            write(a,aux_n);
         end;
         else begin
             seek(a,filesize(a));
@@ -186,11 +186,6 @@ procedure create_text_file(params);
         
     end;
 //-----------------------------------------------------
-procedure MyProcedure(params);
-    begin
-        
-    end;
-//-----------------------------------------------------
 var
     name_received, file_route: String;
     novels: novels_file;
@@ -201,4 +196,3 @@ begin
     create_novel_file(novels,file_route);
     // falta un poco para implementación pero con esto basta
 end.
-

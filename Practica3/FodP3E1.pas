@@ -199,7 +199,7 @@ procedure addEmployee(var a: archivoEmpleados);
 	var
 		auxEmp: empleado;
 	begin
-        // E una lectura posterior, no se checkea que no se repita el número o el DNI, claves unívocas
+        // En una lectura posterior, no se checkea que no se repita el número o el DNI, claves unívocas
 		reset(a);
 		readEmployee(auxEmp);
 		seek(a,fileSize(a));
