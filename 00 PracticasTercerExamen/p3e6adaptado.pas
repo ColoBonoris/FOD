@@ -2,13 +2,13 @@ Program FODP3E6Adaptado;
 
 Const
 
-    dirNew = 'C:\FOD\PrendasActualizadas.dat';
-    dirOld = 'C:\FOD\PrendasViejas.dat';
-    dirFirst = 'C:\FOD\Prendas.dat';
-    dirDet = 'C:\FOD\PrendasAEliminar.dat';
+    DIR_NEW = 'C:\FOD\PrendasTemp.dat';
+    DIR_OLD = 'C:\FOD\PrendasViejas.dat';
+    DIR_FIRST = 'C:\FOD\PrendasActualizadas.dat';
+    DIR_DET = 'C:\FOD\PrendasAEliminar.dat';
 
 Type
-
+    
     prenda = record
         cod: integer;
         desc: String;
@@ -19,27 +19,28 @@ Type
         end;
 
     mFile = file of prenda;
-    dFile = file of integer:
+    dFile = file of integer;
 
 procedure buscarPrenda(var m: mFile; var aux_m: prenda; cod: integer);
 begin
-    // Se supone que el archivo viene abierto, lo devuelve en la posicion del codigo que se busca, si no se encontró, devuelve en eof y el stock de aux_m será negativo
+    // Se supone que el archivo viene abierto, lo devuelve en la posicion del codigo que se busca,
+    // si no se encontró, devuelve en eof y el stock de aux_m será negativo
     seek(m, 0);
     while((not eof(m)) & (aux_m.cod <> cod))do read(m, aux_m);
     if (aux_m.cod <> cod) then aux_m.stock := -1
-    else seek(m, filepos(m) - 1)
+    else seek(m, filepos(m) - 1);
 end;
 
-porocedure bajasLógicas(var m: mFile);
+procedure bajasLógicas(var m: mFile; var det: dFile);
 var
     aux_m: prenda;
     aux_d: integer;
-    det: dFile;
 begin
-    Assign(det, dirDet); reset(det);
+    
+    reset(det);
     reset(m);
 
-    while(noteof(m)) do begin
+    while(not eof(det)) do begin
         read(det, aux_d);
         buscarPrenda(m, aux_m, aux_d);
         if(aux_m.stock >= 0)then begin
@@ -52,12 +53,12 @@ begin
     close(det);
 end;
 
-procedure compactarYRenombrar(var m: mFile);
+procedure compactarYRenombrar(var m, new_m: mFile);
 var
     aux_m: prenda;
-    new_m: mFile;
 begin
-    Assign(new_m, dirNew); rewrite(new_m);
+    
+    rewrite(new_m);
     reset(m);
 
     while(not eof(m)) do begin
@@ -67,14 +68,17 @@ begin
 
     close(m);
     close(new_m);
-    rename(m, dirOld);
-    rename(new_m, dirFirst);
+    rename(m, DIR_OLD);
+    rename(new_m, DIR_FIRST);
 end;
 
 var
-    master_prendas: mFile;
+    master_prendas, new_m: mFile;
+    det: dFile;
 begin
-    Assign(master_prendas, dirFirst);
-    bajasLógicas(master_prendas);
-    compactarYRenombrar(master_prendas);
+    Assign(det, DIR_DET);
+    Assign(master_prendas, DIR_FIRST);
+    Assign(new_m, DIR_NEW);
+    bajasLógicas(master_prendas, det);
+    compactarYRenombrar(master_prendas, new_m);
 end.
