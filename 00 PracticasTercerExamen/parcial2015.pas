@@ -28,25 +28,27 @@ Type
     dArray = array [1..details] of dFile;
     pedidos = array [1..details] of pedido;
 
+procedure leerD(var a: dFile; var dato: pedido);
+begin
+    if(not eof(a)) then
+        read(a, dato)
+    else
+        dato.cod := vA;
+end;
+
 procedure minimo(var v: dArray; var vd: pedidos; var min: pedido);
 var
     pos, i: integer;
     auxp: pedido;
 begin
     min.cod = vA;
-    pos := 0;
     for i := 1 to details do begin
-        if(not eof(v[i]))then begin
-            if(vd[i].cod < min.cod)then begin
-                min := vd[i];
-                pos := i;
-            end;
+        if(vd[i].cod < min.cod)then begin
+            min := vd[i];
+            pos := i;
         end;
     end;
-    if(pos <> 0)then begin
-        read(v[pos], min);
-        vd[pos] := min;
-    end;
+    if (min.cod < vA) then leerD(v[pos], vd[pos]);
 end;
 
 procedure updateMaster(var m: mFile; var vd: dArray);
@@ -63,8 +65,7 @@ begin
 
     for i:= 1 to details do begin
         reset(v[i]);
-        if(not eof(v[i]))then read(v[i], p[i])
-        else p[i].cod := vA;
+        leerD(v[i],p[i]);
     end;
 
     minimo(vd,p,min);
