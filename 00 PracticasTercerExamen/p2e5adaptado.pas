@@ -116,14 +116,14 @@ begin
     else dato.n_part := VALOR_ALTO;
 end;
 
-procedure minDCond(var df: dfArray; var d: dArray; var min: death; partida: integer);
+procedure minD(var df: dfArray; var d: dArray; var min: death);
 var
     i: integer;
     pos_min: integer;
 begin
     min.n_part := VALOR_ALTO;
     for i:=1 to DETALLES do begin
-        if(d[i].n_part < min.n_part)&(d[i].n_part = partida)then begin
+        if(d[i].n_part < min.n_part)then begin
             min := d[i];
             pos_min := i;
         end;
@@ -164,19 +164,25 @@ begin
     end;
 
     minB(bf,b,aux_b);
+    minD(df,d,aux_d);
+
     while(aux_b <> VALOR_ALTO) do begin
-        minDCond(df,d,aux_d,aux_b.n_part);
+        
         asignarNacimiento(aux_m, aux_b);
-        if(aux_d.n_part < aux_b.n_part)then asignarFallecimiento(aux_m, aux_d)
+        if(aux_d.n_part = aux_b.n_part)then begin
+            asignarFallecimiento(aux_m, aux_d);
+            minD(df,d,aux_d);
+        end;
         else begin
-            aux_m.matricula := 'X';
-            aux_m.fecha := 'X';
-            aux_m.hora := 'X';
-            aux_m.lugar := 'X';
+            aux_m.matricula := ' ';
+            aux_m.fecha := ' ';
+            aux_m.hora := ' ';
+            aux_m.lugar := ' ';
             aux_m.died := False;
         end;
         write(m,aux_m);
         minB(bf,b,aux_b);
+        
     end;
     
     close(m);
