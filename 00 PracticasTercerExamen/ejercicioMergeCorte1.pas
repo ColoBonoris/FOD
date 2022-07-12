@@ -52,8 +52,10 @@ begin
     reset(m);
     reset(d1);
     reset(d2);
+
     leerD(d1, aux_d1);
     leerD(d2, aux_d2);
+
     minimo(d1,d2,aux_d1,aux_d2,min,min_suc);
 
     while(min.cod <> vA)do begin
@@ -64,12 +66,15 @@ begin
             if(aux_m.stock >= min.stock)then
                 aux_m.stock := aux_m.stock - min.stock
             else begin
-                writeln('No hay stock suficiente para el pedido de ', min.cant,' unidades de ', min.cod,', faltaron ', min.stock - aux_m.stock, ' unidades.');
+                writeln('No hay stock suficiente para el pedido de ', min.cant,
+                        ' unidades de ', min.cod,' de la sucursal ', min_suc,
+                        ', faltaron ', min.stock - aux_m.stock, ' unidades.');
                 aux_m.stock := 0;
             end;
             minimo(d1,d2,aux_d1,aux_d2,min,min_suc);
         until(min.cod <> aux_m.cod);
-        if (aux_m.stock < aux_m.min_stock) then writeln('El producto ', aux_m.cod, ' tiene un stock de ', aux_m.stock, ' unidades, pero se necesitan ', aux_m.min_stock, ' unidades.');
+        if (aux_m.stock < aux_m.min_stock) then
+            writeln('El producto ', aux_m.cod, ' tiene un stock de ', aux_m.stock, ' unidades, pero se necesitan ', aux_m.min_stock, ' unidades.');
         seek(m, filepos(m) - 1);
         write(m, aux_m);
     end;
@@ -90,3 +95,7 @@ begin
     Assign(detail2, dirFOD + 'detail2.dat');
     actualizarEInformar(maestro, detail1, detail2);
 end.
+// Se supone que todos los archivos tienen la marca eof aplicada.
+// Se supone que los productos pueden repetirse en diferentes sucursales.
+// Se supone que un producto no se repite en el maestro.
+// Se supone que un producto puede repetirse en el detalle de una misma sucursal.

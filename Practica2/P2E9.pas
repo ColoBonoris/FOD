@@ -30,6 +30,8 @@ localidad.
 program FODP2E9;
 //-----------------------------------------------------
 Const
+    VALOR_ALTO = 32000;
+    M_FOD = 'C:\ArchivosFOD\mesas.txt';
 //-----------------------------------------------------
 Type
     mesa = record
@@ -41,6 +43,14 @@ Type
     
     detail_mesa = file of mesa;
 //-----------------------------------------------------
+procedure leer(var f: detail_mesa; var m: mesa);
+begin
+    if not eof(f) then
+        read(f, m)
+    else
+        m.code_loc := VALOR_ALTO;
+end;
+//-----------------------------------------------------
 procedure imprimir_mesas(var mesas: detail_mesa);
     var
         aux_m: mesa;
@@ -48,21 +58,21 @@ procedure imprimir_mesas(var mesas: detail_mesa);
     begin
         reset(mesas);
         //
-        read(mesas,aux_m);
+        leer(mesas,aux_m);
         total := 0;
-        while(not eof(mesas))do begin
-            total_prov := 0
+        while(aux_m <> VALOR_ALTO)do begin
+            total_prov := 0;
             act_prov := aux_m.code_prov;
             print(act_prov);
-            while((act_prov = aux_m.code_prov) and (not eof(mesas)))do begin
+            while(act_prov = aux_m.code_prov)do begin
                 total_loc := 0
                 act_loc := aux_m.code_loc;
-                while((act_loc = aux_m.code_loc) and (act_prov = aux_m.code_prov) and (not eof(mesas)))do begin
+                while((act_loc = aux_m.code_loc) and (act_prov = aux_m.code_prov))do begin
                     total_loc := total_loc + aux_m.amount;
-                    read(mesas,aux_m);
+                    leer(mesas,aux_m);
                 end;
                 print(act_loc,'         ',total_loc);
-                total_prov := total_prov + total_loc
+                total_prov := total_prov + total_loc;
             end;
             total := total + total_prov
             print('Total de Votos Provincia:            ',total_prov);
@@ -75,6 +85,6 @@ procedure imprimir_mesas(var mesas: detail_mesa);
 var
     mesas: mesa;
 begin
-    Assign(mesas,'C:\ArchivosFOD\mesas.txt');
+    Assign(mesas, M_FOD);
     imprimir_mesas (mesas);
 end.
