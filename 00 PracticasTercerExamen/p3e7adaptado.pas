@@ -70,7 +70,9 @@ begin
     close(m);
 end;
 
-procedure compactar(var m: bFile);
+// LOS IMPORTANTES SON COMPACTAR Y COMPACTAR3
+
+procedure compactar(var m: bFile); // #################################
 var
     aux_pos: integer;
     aux_m: esp;
@@ -125,7 +127,7 @@ begin
     close(m);
 end;
 
-procedure compactar3(var f: bFile);
+procedure compactar3(var f: bFile); // #################################
 var
     aux_fin, pos: integer;
     e: esp;
@@ -134,8 +136,8 @@ begin
     reset(f);
     aux_fin := fileSize(f) -1;
     recorrido := false;
-
-    while (not recorrido) do begin
+    // Corta cuando los punteros pos y din son iguales o termina el archivo
+    while (not recorrido) and (not eof(f)) do begin
         read(f, e);
         if e.cod = -1 then begin
         // Prepara para borrar 
@@ -150,17 +152,19 @@ begin
             end;
         // Evalúa en qué posición del ercorrido estamos
             if(aux_fin > pos)then
-                aux_fin := aux_fin - 1;
-            else
+                aux_fin := aux_fin - 1
+            else begin
                 recorrido := true;
+                seek(f,filepos(m)-1);
+            end;
         // Trunca y borra el archivo a borrar
-            seek(f,filepos(m)-1);
             truncate(f);
             if(not recorrido)then begin
                 seek(f, pos);
                 write(f, e);
             end;
         end;
+
     end;
     close(f);
 end;
